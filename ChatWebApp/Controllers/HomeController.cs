@@ -14,7 +14,8 @@ public class HomeController : Controller
     }
 
     public IActionResult Index()
-    {
+    {   
+        ViewData["Time"] = DateTime.UtcNow.ToString();
         return View();
     }
 

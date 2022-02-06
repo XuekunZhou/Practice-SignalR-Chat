@@ -1,4 +1,3 @@
-#nullable disable
 using ChatWebApp.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
