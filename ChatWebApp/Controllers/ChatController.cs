@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ChatWebApp.Controllers
 {
-    // [Authorize]
+    [Authorize]
     public class ChatController : Controller
     {
         private readonly ChatWebAppDbContext _context;

@@ -1,5 +1,6 @@
 using ChatWebApp.Hubs;
 using ChatWebApp.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,8 @@ builder.Services.AddDbContext<ChatWebAppDbContext>(options =>
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ChatWebAppDbContext>();
+
+builder.Services.ConfigureApplicationCookie(options => options.LoginPath = "/Account/LogIn");
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
