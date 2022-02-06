@@ -16,4 +16,5 @@ public class ChatWebAppDbContext : IdentityDbContext<ApplicationUser>
 
         public DbSet<ChatWebApp.Models.Chat> Chats { get; set; }
         public DbSet<ChatWebApp.Models.ChatMessage> ChatMessages { get; set; }
+        public DbSet<ApplicationUserChat> ApplicationUserChat { get; set; }
     }
