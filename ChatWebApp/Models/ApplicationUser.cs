@@ -9,6 +9,23 @@ namespace ChatWebApp.Models
         public string LastName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public ICollection<Chat> Chats { get; set; }
-        public ICollection<ChatMessage> SentMessages { get; set; }
+        public List<ApplicationUserChat> ApplicationUserChats { get; set; }
+        public List<ChatMessage> SentMessages { get; set; }
+
+        public ApplicationUser()
+        {
+            
+        }
+
+        public ApplicationUser(string firstName, string lastName, DateTime dateOfBirth, string email)
+        {
+            FirstName = firstName;
+            LastName = lastName;
+            DateOfBirth = dateOfBirth;
+            Email = email;
+            UserName = email;
+            Chats = new List<Chat>();
+            SentMessages = new List<ChatMessage>();
+        }
     }
 }

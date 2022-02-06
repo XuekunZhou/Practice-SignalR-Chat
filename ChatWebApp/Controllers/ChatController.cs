@@ -1,3 +1,4 @@
+using System.Linq;
 using ChatWebApp.Hubs;
 using ChatWebApp.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace ChatWebApp.Controllers
 {
-    [Authorize]
+    // [Authorize]
     public class ChatController : Controller
     {
         private readonly ChatWebAppDbContext _context;
@@ -21,32 +22,128 @@ namespace ChatWebApp.Controllers
             _hubContext = hubContext;
         }
 
-        public async Task<IActionResult> IndexAsync(string? id)
+        public IActionResult Index()
+        {
+            var chats = _context.Chats.ToList();
+            return View(chats);
+        }
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult Create(ChatViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var chat = new Chat(model.Name);
+                _context.Add(chat);
+                _context.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            return View(model);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DetailsAsync(string id)
         {   
+            var chat = _context.Chats.Where(c => c.Id == id).SingleOrDefault();
+
+            if (chat != null)
+            {
+                ViewData["participates"] = await participatesAsync(chat);
+                return View(chat);
+            }
+            
+            return RedirectToAction("NotFound", "Error");
+        }
+
+        [HttpPost]
+        public IActionResult Delete(string id)
+        {
+            var chat = _context.Chats.Where(c => c.Id == id).SingleOrDefault();
+
+            if (chat != null)
+            {
+                _context.Chats.Remove(chat);
+                _context.SaveChanges();
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> JoinAsync(string id)
+        {
             var loggedInUser = await _userManager.GetUserAsync(User);
             var chat = _context.Chats.Where(c => c.Id == id).SingleOrDefault();
 
             if (chat != null)
             {
-                var chatList = _context.ApplicationUserChat.Where(u => u.Participant == loggedInUser);
+                var participates = new ApplicationUserChat
+                {
+                    ApplicationUsers = loggedInUser,
+                    ApplicationUserId = loggedInUser.Id,
+                    Chats = chat,
+                    ChatsId = chat.Id,
+                    Joined = DateTime.UtcNow
+                };
+
+                _context.Add(participates);
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Details", new {id});
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> LeaveAsync(string id)
+        {
+            var loggedInUser = await _userManager.GetUserAsync(User);
+            var chat = _context.Chats.Where(c => c.Id == id).SingleOrDefault();
+
+            if (chat != null)
+            {
+                var participates = _context.ApplicationUserChats.Where(u => u.ApplicationUsers == loggedInUser && u.Chats == chat).SingleOrDefault();
                 
-                bool access = false;
-                while (!access)
+                if (participates != null)
                 {
-                    foreach(var applicationUserChat in chatList)
-                    {
-                        if (applicationUserChat.ChatsId == id)
-                        {
-                            access = true;
-                        }
-                    }
-                }
-                if (access)
-                {
-                    return View();
+                    _context.ApplicationUserChats.Remove(participates);
+                    _context.SaveChanges();
                 }
             }
-            return RedirectToAction("Error", "NoAccess");
+            
+            return RedirectToAction("Details", new {id});
+        }
+
+        [HttpGet]
+        public IActionResult Chatroom(string id)
+        {
+            var chat = _context.Chats.Where(c => c.Id == id).SingleOrDefault();
+
+            if (chat != null)
+            {
+                return View(chat);
+            }
+            
+            return RedirectToAction("NotFound", "Error");
+        }
+
+        private async Task<bool> participatesAsync(Chat chat)
+        {
+            var loggedInUser = await _userManager.GetUserAsync(User);
+
+            var participants = _context.ApplicationUserChats.Where(ac => ac.ChatsId == chat.Id).Select(au => au.ApplicationUsers);
+
+            if (participants.Contains(loggedInUser))
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

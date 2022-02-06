@@ -61,14 +61,7 @@ namespace ChatWebApp.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser
-                {
-                    FirstName = model.FirstName,
-                    LastName = model.LastName,
-                    DateOfBirth = model.DateOfBirth,
-                    Email = model.Email,
-                    UserName = model.Email
-                };
+                var user = new ApplicationUser(model.FirstName, model.LastName, model.DateOfBirth, model.Email);
 
                 var result = await _userManager.CreateAsync(user, model.Password);
 

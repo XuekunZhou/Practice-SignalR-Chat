@@ -10,8 +10,9 @@ namespace ChatWebApp.Models
         public string Id { get; set; }
  
         public string Name { get; set; }
-        public ICollection<ApplicationUser> Participants { get; set; }
-        public ICollection<ChatMessage> Messages { get; set; }
+        public List<ApplicationUser> Participants { get; set; }
+        public List<ApplicationUserChat> ApplicationUserChats { get; set; }
+        public List<ChatMessage> Messages { get; set; }
 
         public Chat()
         {
@@ -22,6 +23,8 @@ namespace ChatWebApp.Models
         {
             Id = CreateId();
             Name = name;
+            Participants = new List<ApplicationUser>();
+            Messages = new List<ChatMessage>();
         }
 
         private static string CreateId()

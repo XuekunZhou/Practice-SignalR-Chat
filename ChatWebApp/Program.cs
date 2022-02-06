@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ChatWebAppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("ChatWebAppDbContext")));
+    options.UseSqlite("Data source=ChatWebAppDatabase.db"));
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<ChatWebAppDbContext>();

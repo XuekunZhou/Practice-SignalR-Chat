@@ -1,12 +1,19 @@
 #nullable disable
+using System.ComponentModel.DataAnnotations;
+
 namespace ChatWebApp.Models
 {
     public class ApplicationUserChat
     {
-        public string ChatsId { get; set; }
-        public Chat Chat { get; set; }
+        [Key]
+        public int Id { get; set; }
+        
+        public ApplicationUser ApplicationUsers { get; set; }
+        public string ApplicationUserId { get; set; }
 
-        public string ParticipantsId { get; set; }
-        public ApplicationUser Participant { get; set; }
+        public Chat Chats { get; set; }
+        public string ChatsId { get; set; }
+
+        public DateTime Joined { get; set; }
     }
 }

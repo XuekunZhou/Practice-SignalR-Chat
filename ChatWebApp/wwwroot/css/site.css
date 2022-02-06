@@ -16,3 +16,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.w-45 {
+  width: 45% !important;
+}

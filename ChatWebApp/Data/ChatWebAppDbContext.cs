@@ -8,13 +8,13 @@ using ChatWebApp.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 public class ChatWebAppDbContext : IdentityDbContext<ApplicationUser>
+{
+    public ChatWebAppDbContext (DbContextOptions<ChatWebAppDbContext> options)
+        : base(options)
     {
-        public ChatWebAppDbContext (DbContextOptions<ChatWebAppDbContext> options)
-            : base(options)
-        {
-        }
-
-        public DbSet<ChatWebApp.Models.Chat> Chats { get; set; }
-        public DbSet<ChatWebApp.Models.ChatMessage> ChatMessages { get; set; }
-        public DbSet<ApplicationUserChat> ApplicationUserChat { get; set; }
     }
+
+    public DbSet<ChatWebApp.Models.Chat> Chats { get; set; }
+    public DbSet<ChatWebApp.Models.ChatMessage> ChatMessages { get; set; }
+    public DbSet<ApplicationUserChat> ApplicationUserChats { get; set; }
+}

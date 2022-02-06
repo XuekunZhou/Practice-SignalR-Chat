@@ -1,0 +1,16 @@
+@model ChatViewModel
+
+@{
+    ViewData["Title"] = "Create new chat";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<form action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control">
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <input type="submit" class="btn btn-primary mt-2" value="Create">
+</form>

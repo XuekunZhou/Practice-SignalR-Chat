@@ -1,0 +1,43 @@
+@model Chat
+
+@{
+    if (Model != null)
+    {
+        ViewData["Title"] = "Chatroom " + Model.Name;
+    }
+}
+<h1>Welcome to @ViewData["Title"]</h1>
+
+
+<div class="card overflow-auto" style="height: 700px">
+    <div class="card-body" id="chatbody">
+        <div class="card w-45">
+            <div class="card-body">
+                <p>This is some text within a card body.</p>
+                <p class="card-text float-end"><small class="text-muted">@DateTime.Now.AddMinutes(-3).ToString()</small></p>
+            </div>
+        </div>
+        <div class="card w-45 float-end">
+            <div class="card-body">
+                <p>This is some text within a card body.</p>
+                <p class="card-text float-end"><small class="text-muted">@DateTime.Now.ToString()</small></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form action="" class="mt-4 mb-5">
+    <div class="form-group">
+        <input class="form-control" type="text" name="" id="">
+    </div>
+    <div>
+        <input type="submit" class="btn btn-primary float-end mt-2" value="Send">
+    </div>
+</form>
+
+
+
+
+<script src="~/js/signalr/dist/browser/signalr.js"></script>
+<script src="~/js/chat.js"></script>
