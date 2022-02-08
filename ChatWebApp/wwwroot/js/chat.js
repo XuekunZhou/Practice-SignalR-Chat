@@ -5,7 +5,7 @@ var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 //Disable the send button until connection is established.
 document.getElementById("sendButton").disabled = true;
 
-connection.on("ReceiveMessage", function (message) {
+connection.on("ReceiveMessage", function (sender, message) {
     var row = document.createElement("div");
     var colleft = document.createElement("div");
     var colright = document.createElement("div");
@@ -27,8 +27,15 @@ connection.on("ReceiveMessage", function (message) {
     row.appendChild(colleft);
     row.appendChild(colright);
 
-    colleft.appendChild(card);
+    var user = document.getElementById("sender").value;
 
+    if (user == `${sender}`)
+    {
+        colright.appendChild(card);
+    }
+    else {
+        colleft.appendChild(card);
+    }
     card.appendChild(cardBody);
     cardBody.appendChild(text);
     cardBody.appendChild(date);
@@ -38,7 +45,8 @@ connection.on("ReceiveMessage", function (message) {
     // is not interpreted as markup. If you're assigning in any other way, you 
     // should be aware of possible script injection concerns.
     text.textContent = `${message}`;
-    datetext.textContent = Date.UTC().toString();
+    datetext.textContent = Date();
+    // datetext.textContent = `${sender}`;
 });
 
 connection.start().then(function () {
@@ -49,7 +57,8 @@ connection.start().then(function () {
 
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var message = document.getElementById("messageInput").value;
-    connection.invoke("SendMessageToAll", message).catch(function (err) {
+    var sender = document.getElementById("sender").value;
+    connection.invoke("SendMessage", sender, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();

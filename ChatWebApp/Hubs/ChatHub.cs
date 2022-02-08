@@ -4,9 +4,9 @@ namespace ChatWebApp.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessageToAll(string message)
+        public async Task SendMessage(string sender, string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", message);
+            await Clients.All.SendAsync("ReceiveMessage", sender, message);
         }
     }
 }

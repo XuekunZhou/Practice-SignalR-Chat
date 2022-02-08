@@ -120,12 +120,14 @@ namespace ChatWebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult Chatroom(string id)
+        public async Task<IActionResult> ChatroomAsync(string id)
         {
             var chat = _context.Chats.Where(c => c.Id == id).SingleOrDefault();
+            var loggedInUser = await _userManager.GetUserAsync(User);
 
             if (chat != null)
             {
+                ViewData["user"] = loggedInUser.Id;
                 return View(chat);
             }
             
