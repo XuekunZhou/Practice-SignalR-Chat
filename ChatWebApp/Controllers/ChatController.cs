@@ -55,7 +55,7 @@ namespace ChatWebApp.Controllers
 
             if (chat != null)
             {
-                ViewData["participates"] = await participatesAsync(chat);
+                ViewData["participates"] = await ParticipatesAsync(chat);
                 return View(chat);
             }
             
@@ -127,23 +127,31 @@ namespace ChatWebApp.Controllers
 
             if (chat != null)
             {
-                ViewData["user"] = loggedInUser.Id;
-                chat.Messages = _context.ChatMessages.Where(m => m.ChatId == chat.Id).Take(10).ToList();
-                return View(chat);
+                if (await ParticipatesAsync(chat))
+                {
+                    ViewData["user"] = loggedInUser.Id;
+                    chat.Messages = _context.ChatMessages.Where(m => m.ChatId == chat.Id).Take(10).ToList();
+                    return View(chat);
+                }
+
+                return RedirectToAction("NoAcces", "Error");
             }
             
             return RedirectToAction("NotFound", "Error");
         }
 
-        private async Task<bool> participatesAsync(Chat chat)
+        private async Task<bool> ParticipatesAsync(Chat chat)
         {
             var loggedInUser = await _userManager.GetUserAsync(User);
 
             var participants = _context.ApplicationUserChats.Where(ac => ac.ChatsId == chat.Id).Select(au => au.ApplicationUsers);
 
-            if (participants.Contains(loggedInUser))
+            if (participants.Count() != 0)
             {
-                return true;
+                if (participants.Contains(loggedInUser))
+                {
+                    return true;
+                }
             }
 
             return false;
