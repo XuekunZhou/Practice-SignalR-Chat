@@ -128,6 +128,7 @@ namespace ChatWebApp.Controllers
             if (chat != null)
             {
                 ViewData["user"] = loggedInUser.Id;
+                chat.Messages = _context.ChatMessages.Where(m => m.ChatId == chat.Id).Take(10).ToList();
                 return View(chat);
             }
             

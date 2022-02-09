@@ -4,15 +4,57 @@
     if (Model != null)
     {
         ViewData["Title"] = "Chatroom " + Model.Name;
+        ViewData["chatId"] = (string) Model.Id;
     }
 }
 <input type="text" value='@ViewData["user"]' id="sender" hidden>
+<input type="text" value='@ViewData["chatId"]' id="chatId" hidden>
 <h1>Welcome to @ViewData["Title"]</h1>
 
 
-<div class="card overflow-auto" style="height: 700px">
-    <div class="card-body" id="chatbody">
-        
+<div class="card" style="height: 700px">
+    <div class="card-body overflow-auto" id="chatbody">
+        @foreach (var message in Model.Messages)
+        {
+            <div class="row mt-2">
+                @if (message.SenderId == (string) ViewData["user"])
+                {
+                    <div class="col-6"></div>
+                    <div class="col-6">
+                        <div class="card w-100">
+                            <div class="card-body">
+                                <p>
+                                    @message.Message
+                                </p>
+                                <p class="card-text float-end">
+                                    <small class="text-muted">
+                                        @message.DateCreated
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-6">
+                        <div class="card w-100">
+                            <div class="card-body">
+                                <p>
+                                    @message.Message
+                                </p>
+                                <p class="card-text float-end">
+                                    <small class="text-muted">
+                                        @message.DateCreated
+                                    </small>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6"></div>
+                }
+            </div>
+        }
     </div>
 </div>
 

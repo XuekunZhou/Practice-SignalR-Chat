@@ -4,9 +4,19 @@ namespace ChatWebApp.Hubs
 {
     public class ChatHub : Hub
     {
-        public async Task SendMessage(string sender, string message)
+        public Task SendMessage(string sender, string message)
         {
-            await Clients.All.SendAsync("ReceiveMessage", sender, message);
+            return Clients.All.SendAsync("ReceiveMessage", sender, message);
+        }
+
+        public async Task JoinGroup(string group)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, group);
+        }
+
+        public Task SendMessageToGroup(string group, string sender, string message)
+        {
+            return Clients.Group(group).SendAsync("ReceiveMessage", sender, message);
         }
     }
 }

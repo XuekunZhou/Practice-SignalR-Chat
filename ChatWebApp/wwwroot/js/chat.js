@@ -1,15 +1,17 @@
 "use strict";
-
+const uri = '../../api/chatmessage';
 var connection = new signalR.HubConnectionBuilder().withUrl("/chatHub").build();
 
+var chatId = document.getElementById("chatId").value;
 //Disable the send button until connection is established.
 document.getElementById("sendButton").disabled = true;
 
-connection.on("ReceiveMessage", function (sender, message) {
+var box = document.getElementById("chatBody");
+
+function AddMessage(sender, message) {
     var row = document.createElement("div");
     var colleft = document.createElement("div");
     var colright = document.createElement("div");
-
     var card = document.createElement("div");
     var cardBody = document.createElement("div");
     var text = document.createElement("p");
@@ -36,21 +38,30 @@ connection.on("ReceiveMessage", function (sender, message) {
     else {
         colleft.appendChild(card);
     }
+    var window = document.getElementById("chatbody");
     card.appendChild(cardBody);
     cardBody.appendChild(text);
     cardBody.appendChild(date);
     date.appendChild(datetext);
-    document.getElementById("chatbody").appendChild(row);
-    // We can assign user-supplied strings to an element's textContent because it
-    // is not interpreted as markup. If you're assigning in any other way, you 
-    // should be aware of possible script injection concerns.
+    window.appendChild(row);
+
     text.textContent = `${message}`;
     datetext.textContent = Date();
-    // datetext.textContent = `${sender}`;
+    window.scrollTop = window.scrollHeight;
+}
+
+connection.on("ReceiveMessage", function (sender, message) {
+    SendMessageToDatabase(sender, message, chatId);
+    AddMessage(sender, message);
+    document.getElementById("messageInput").value = "";
 });
 
 connection.start().then(function () {
     document.getElementById("sendButton").disabled = false;
+    connection.invoke("JoinGroup", chatId).catch(function (err)
+    {
+        return console.error(err.toString());
+    });
 }).catch(function (err) {
     return console.error(err.toString());
 });
@@ -58,8 +69,39 @@ connection.start().then(function () {
 document.getElementById("sendButton").addEventListener("click", function (event) {
     var message = document.getElementById("messageInput").value;
     var sender = document.getElementById("sender").value;
-    connection.invoke("SendMessage", sender, message).catch(function (err) {
+    connection.invoke("SendMessageToGroup", chatId, sender, message).catch(function (err) {
         return console.error(err.toString());
     });
     event.preventDefault();
 });
+
+function SendMessageToDatabase(sender, message, chat) {
+    var date = Date();
+  
+    const item = {
+      SenderId: sender,
+      Message: message,
+      ChatId: chat
+    };
+
+    fetch(uri, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(item)
+      })
+        .then(response => response.json())
+        .then(() => {
+            getItems();
+          })
+        .catch(error => console.error('Unable to add item.', error));
+}
+
+function getItems() {
+    fetch(uri)
+      .then(response => response.json())
+      .then(data => _displayItems(data))
+      .catch(error => console.error('Unable to get items.', error));
+  }
