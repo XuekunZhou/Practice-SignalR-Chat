@@ -24,8 +24,6 @@ namespace ChatWebApp.Models
             DateOfBirth = dateOfBirth;
             Email = email;
             UserName = email;
-            Chats = new List<Chat>();
-            SentMessages = new List<ChatMessage>();
         }
     }
 }

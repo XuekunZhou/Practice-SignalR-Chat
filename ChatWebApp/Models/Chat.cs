@@ -13,6 +13,7 @@ namespace ChatWebApp.Models
         public List<ApplicationUser> Participants { get; set; }
         public List<ApplicationUserChat> ApplicationUserChats { get; set; }
         public List<ChatMessage> Messages { get; set; }
+        public bool Public { get; private set; }
 
         public Chat()
         {
@@ -23,8 +24,7 @@ namespace ChatWebApp.Models
         {
             Id = CreateId();
             Name = name;
-            Participants = new List<ApplicationUser>();
-            Messages = new List<ChatMessage>();
+            Public = true;
         }
 
         private static string CreateId()

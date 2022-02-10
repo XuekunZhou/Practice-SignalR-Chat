@@ -46,7 +46,7 @@ function AddMessage(sender, message) {
     window.appendChild(row);
 
     text.textContent = `${message}`;
-    datetext.textContent = Date();
+    datetext.textContent = new Date().toUTCString();
     window.scrollTop = window.scrollHeight;
 }
 
